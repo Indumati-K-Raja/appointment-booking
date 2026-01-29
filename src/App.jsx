@@ -122,8 +122,33 @@ const AppointmentForm = ({ formData, setFormData, isSubmitted, setIsSubmitted })
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsSubmitted(true);
-    setTimeout(() => setIsSubmitted(false), 3000);
+
+    // Integrated Webhook POST to n8n AI Agent
+    fetch("https://YOUR-PUBLIC-N8N-URL/webhook/appointment-booking-agent", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        purpose: formData.purpose,
+        date: formData.date,
+        startTime: formData.startTime,
+        endTime: formData.endTime,
+        timeZone: formData.timezone,
+        email: formData.email
+      })
+    })
+      .then(response => {
+        console.log('Webhook Response:', response);
+        // Success handling is managed by the isSubmitted state animation
+      })
+      .catch(error => {
+        console.error('Webhook Error:', error);
+      });
+
+    setTimeout(() => setIsSubmitted(false), 4000);
   };
+
 
   return (
     <motion.div
